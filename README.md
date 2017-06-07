@@ -56,7 +56,9 @@ $shipStation->{$endpoint}->get($options = [], $endpoint = '');
 ```
 Example of getting an order with the orderId of 1.
 ```php
-$shipStation = $this->app['LaravelShipStation\ShipStation'];
+use Hkonnet\LaravelShipStation\ShipStation; 
+
+$shipStation = new ShipStation();
 
 // Fetch an order by orderId == 123, orderId is defined by ShipStation
 $order = $shipStation->orders->get([], $endpoint = 123); // returns \stdClass
@@ -74,7 +76,8 @@ There are models that contain all of the properties available via the API. These
 
 An example on how to create a new order to be shipped:
 ```php
-    $shipStation = $this->app['LaravelShipStation\ShipStation'];
+    use Hkonnet\LaravelShipStation\ShipStation;
+    $shipStation = new ShipStation();
 
     $address = new LaravelShipStation\Models\Address();
 

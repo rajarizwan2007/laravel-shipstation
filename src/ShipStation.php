@@ -1,5 +1,5 @@
 <?php
-namespace LaravelShipStation;
+namespace Hkonnet\LaravelShipStation;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -40,8 +40,11 @@ class ShipStation extends Client
      * @param  string  $apiSecret
      * @throws \Exception
      */
-    public function __construct($apiKey, $apiSecret)
+    public function __construct()
     {
+        $apiKey  = config('shipstation.apiKey');
+        $apiSecret = config('shipstation.apiSecret');
+
         if (!isset($apiKey, $apiSecret)) {
             throw new \Exception('Your API key and/or private key are not set. Did you run artisan vendor:publish?');
         }
@@ -63,6 +66,7 @@ class ShipStation extends Client
      */
     public function get($options = [], $endpoint = '')
     {
+        dd("Asd");
         $response = $this->request('GET', "{$this->endpoint}{$endpoint}", ['query' => $options]);
 
         $this->sleepIfRateLimited($response);
@@ -144,7 +148,7 @@ class ShipStation extends Client
             $this->endpoint = '/' . $property . '/';
         }
 
-        $className = "LaravelShipStation\\Helpers\\" . ucfirst($property);
+        $className = "Hkonnet\\LaravelShipStation\\Helpers\\" . ucfirst($property);
 
         if (class_exists($className)) {
             return new $className($this);

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelShipStation;
+namespace Hkonnet\LaravelShipStation;
 
 use Illuminate\Support\ServiceProvider;
 

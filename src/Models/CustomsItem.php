@@ -1,5 +1,5 @@
 <?php
-namespace LaravelShipStation\Models;
+namespace Hkonnet\LaravelShipStation\Models;
 
 class CustomsItem
 {
