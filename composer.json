@@ -1,11 +1,11 @@
 {
-    "name": "campo/laravel-shipstation",
-    "description": "ShipStation API wrapper for Laravel 5.",
+    "name": "hkonnet/laravel-shipstation",
+    "description": "ShipStation API package Laravel 5.",
     "license": "MIT",
     "authors": [
         {
-            "name": "Joe Campo",
-            "email": "jcampo@gmail.com"
+            "name": "Haroon Khan",
+            "email": "hkonnet@gmail.com"
         }
     ],
     "autoload" : {
