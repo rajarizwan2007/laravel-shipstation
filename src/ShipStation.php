@@ -66,7 +66,7 @@ class ShipStation extends Client
      */
     public function get($options = [], $endpoint = '')
     {
-        dd("Asd");
+        
         $response = $this->request('GET', "{$this->endpoint}{$endpoint}", ['query' => $options]);
 
         $this->sleepIfRateLimited($response);
