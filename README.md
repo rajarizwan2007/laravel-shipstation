@@ -10,17 +10,9 @@ This is a simple PHP API wrapper for [ShipStation](http://shipstation.com) built
 Installation
 ------------
 This package can be installed via [Composer](http://getcomposer.org) by requiring the ```campo/laravel-shipstation``` package in your project's ```composer.json```
-```json
-{
-    "require": {
-        "campo/laravel-shipstation": "~3.0"
-    }
-}
-```
 
-Then at your Laravel project root run:
-```sh
-composer update
+```json
+composer require hkonnet/laravel-shipstation
 ```
 
 Second, add the LaravelShipStation service provider to your providers array located in ```config/app.php```
@@ -30,7 +22,7 @@ LaravelShipStation\ShipStationServiceProvider::class
 
 After installing via composer you will need to publish the configuration:
 ```php
-php artisan vendor:publish
+php artisan vendor:publish hkonnet/laravel-shipstatio
 ```
 This will create the configuration file for your API key and API secret key at ```config/shipstation.php```. You will need to obtain your API & Secret key from ShipStation: [How can I get access to ShipStation's API?](https://help.shipstation.com/hc/en-us/articles/206638917-How-can-I-get-access-to-ShipStation-s-API-)
 ## Dependencies
