@@ -17,12 +17,12 @@ composer require rajarizwan2007/laravel-shipstation:dev-master
 
 Second, add the LaravelShipStation service provider to your providers array located in ```config/app.php```
 ```php
-LaravelShipStation\ShipStationServiceProvider::class
+Hkonnet\LaravelShipStation\ShipStationServiceProvider::class,
 ```
 
 After installing via composer you will need to publish the configuration:
 ```php
-php artisan vendor:publish rajarizwan2007/laravel-shipstatio
+php artisan vendor:publish --tag=shipstation
 ```
 This will create the configuration file for your API key and API secret key at ```config/shipstation.php```. You will need to obtain your API & Secret key from ShipStation: [How can I get access to ShipStation's API?](https://help.shipstation.com/hc/en-us/articles/206638917-How-can-I-get-access-to-ShipStation-s-API-)
 ## Dependencies
