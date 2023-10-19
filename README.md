@@ -12,7 +12,7 @@ Installation
 This package can be installed via [Composer](http://getcomposer.org) by requiring the ```campo/laravel-shipstation``` package in your project's ```composer.json```
 
 ```json
-composer require rajarizwan2007/laravel-shipstation
+composer require rajarizwan2007/laravel-shipstation:dev-master
 ```
 
 Second, add the LaravelShipStation service provider to your providers array located in ```config/app.php```
