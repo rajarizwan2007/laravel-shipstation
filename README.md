@@ -5,14 +5,14 @@ LaravelShipStation
 [![Latest Version on Packagist][packagist-downloads]][link-packagist]
 [![Build Status](https://travis-ci.org/joecampo/laravel-shipstation.svg?branch=master)](https://travis-ci.org/joecampo/laravel-shipstation)
 
-This is a simple PHP API wrapper for [ShipStation](http://shipstation.com) built for Laravel 5.\*.
+A simple PHP API wrapper for [ShipStation](http://shipstation.com) built for Laravel 10.\*.
 
 Installation
 ------------
 This package can be installed via [Composer](http://getcomposer.org) by requiring the ```campo/laravel-shipstation``` package in your project's ```composer.json```
 
 ```json
-composer require hkonnet/laravel-shipstation
+composer require rajarizwan2007/laravel-shipstation
 ```
 
 Second, add the LaravelShipStation service provider to your providers array located in ```config/app.php```
@@ -22,7 +22,7 @@ LaravelShipStation\ShipStationServiceProvider::class
 
 After installing via composer you will need to publish the configuration:
 ```php
-php artisan vendor:publish hkonnet/laravel-shipstatio
+php artisan vendor:publish rajarizwan2007/laravel-shipstatio
 ```
 This will create the configuration file for your API key and API secret key at ```config/shipstation.php```. You will need to obtain your API & Secret key from ShipStation: [How can I get access to ShipStation's API?](https://help.shipstation.com/hc/en-us/articles/206638917-How-can-I-get-access-to-ShipStation-s-API-)
 ## Dependencies
@@ -48,7 +48,7 @@ $shipStation->{$endpoint}->get($options = [], $endpoint = '');
 ```
 Example of getting an order with the orderId of 1.
 ```php
-use Hkonnet\LaravelShipStation\ShipStation; 
+use rajarizwan2007\LaravelShipStation\ShipStation; 
 
 $shipStation = new ShipStation();
 
@@ -68,7 +68,7 @@ There are models that contain all of the properties available via the API. These
 
 An example on how to create a new order to be shipped:
 ```php
-    use Hkonnet\LaravelShipStation\ShipStation;
+    use rajarizwan2007\LaravelShipStation\ShipStation;
     $shipStation = new ShipStation();
 
     $address = new LaravelShipStation\Models\Address();
