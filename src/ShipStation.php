@@ -80,7 +80,7 @@ class ShipStation extends Client
      */
     public function post($uri, array $options = []): \Psr\Http\Message\ResponseInterface
     {
-        $response = $this->request('POST', $uri, ['json' => $options]);
+        $response = $this->request('POST', $uri, ['form_params' => $options]);
         $this->sleepIfRateLimited($response);
         return $response;
     }
@@ -106,13 +106,12 @@ class ShipStation extends Client
      * @param  string  $endpoint
      * @return \stdClass
      */
-    public function update($options = [], $endpoint = '')
+    public function update($endpoint, array $options = []): \Psr\Http\Message\ResponseInterface
     {
-        $response = $this->request('PUT', "{$this->endpoint}{$endpoint}", ['json' => $options]);
-
+        $response = $this->request('PUT', $endpoint, ['json' => $options]);
         $this->sleepIfRateLimited($response);
-
-        return json_decode($response->getBody()->getContents());
+        // return json_decode($response->getBody()->getContents());
+        return $response;
     }
 
     /**
