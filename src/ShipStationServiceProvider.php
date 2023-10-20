@@ -31,5 +31,9 @@ class ShipStationServiceProvider extends ServiceProvider
                 config('shipstation.apiSecret')
             );
         });
+
+        $this->app->bind('shipstation', function ($app) {
+            return new \Hkonnet\LaravelShipStation\ShipStation();
+        });
     }
 }
