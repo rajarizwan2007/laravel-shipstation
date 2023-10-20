@@ -1,22 +1,15 @@
 <?php
-
-namespace LaravelShipStation;
+namespace Hkonnet\LaravelShipStation;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
-use Psr\Http\Message\ResponseInterface;
 
-class ShipStation
+class ShipStation extends Client
 {
     /**
      * @var string The current endpoint for the API. The default endpoint is /orders/
      */
     public $endpoint = '/orders/';
-
-    /**
-     * @var \GuzzleHttp\Client The http client used when calling the API.
-     */
-    public $client = null;
 
     /**
      * @var array Our list of valid ShipStation endpoints.
@@ -32,7 +25,7 @@ class ShipStation
         '/stores/',
         '/users/',
         '/warehouses/',
-        '/webhooks/',
+        '/webhooks/'
     ];
 
     /**
@@ -40,43 +33,27 @@ class ShipStation
      */
     private $base_uri = 'https://ssapi.shipstation.com';
 
-    /** @var int */
-    private $maxAllowedRequests = 0;
-
-    /** @var int|null */
-    private $remainingRequests = null;
-
-    /** @var int */
-    private $secondsUntilReset = 0;
-
     /**
      * ShipStation constructor.
      *
      * @param  string  $apiKey
      * @param  string  $apiSecret
-     * @param  string  $apiURL
-     * @param  string|null  $partnerApiKey
      * @throws \Exception
      */
-    public function __construct($apiKey, $apiSecret, $apiURL, $partnerApiKey = null)
+    public function __construct()
     {
-        if (! isset($apiKey, $apiSecret)) {
+        $apiKey  = config('shipstation.apiKey');
+        $apiSecret = config('shipstation.apiSecret');
+
+        if (!isset($apiKey, $apiSecret)) {
             throw new \Exception('Your API key and/or private key are not set. Did you run artisan vendor:publish?');
         }
 
-        $this->base_uri = $apiURL;
-
-        $headers = [
-            'Authorization' => 'Basic '.base64_encode("{$apiKey}:{$apiSecret}"),
-        ];
-
-        if (! empty($partnerApiKey)) {
-            $headers['x-partner'] = $partnerApiKey;
-        }
-
-        $this->client = new Client([
+        parent::__construct([
             'base_uri' => $this->base_uri,
-            'headers'  => $headers,
+            'headers'  => [
+                'Authorization' => 'Basic ' . base64_encode("{$apiKey}:{$apiSecret}"),
+            ]
         ]);
     }
 
@@ -87,14 +64,12 @@ class ShipStation
      * @param  string  $endpoint
      * @return \stdClass
      */
-    public function get($options = [], $endpoint = '')
+    public function get($uri, array $options = []): \Psr\Http\Message\ResponseInterface
     {
-        $response = $this->client->request('GET', "{$this->endpoint}{$endpoint}", ['query' => $options]);
-
+        $response = $this->request('GET', $uri, $options);
         $this->sleepIfRateLimited($response);
-
-        return json_decode($response->getBody()->getContents());
-    }
+        return $response;
+    }    
 
     /**
      * Post to a resource using the assigned endpoint ($this->endpoint).
@@ -103,13 +78,11 @@ class ShipStation
      * @param  string  $endpoint
      * @return \stdClass
      */
-    public function post($options = [], $endpoint = '')
+    public function post($uri, array $options = []): \Psr\Http\Message\ResponseInterface
     {
-        $response = $this->client->request('POST', "{$this->endpoint}{$endpoint}", ['json' => $options]);
-
+        $response = $this->request('POST', $uri, ['form_params' => $options]);
         $this->sleepIfRateLimited($response);
-
-        return json_decode($response->getBody()->getContents());
+        return $response;
     }
 
     /**
@@ -118,14 +91,13 @@ class ShipStation
      * @param  string  $endpoint
      * @return \stdClass
      */
-    public function delete($endpoint = '')
+    public function delete($uri, array $options = []): \Psr\Http\Message\ResponseInterface
     {
-        $response = $this->client->request('DELETE', "{$this->endpoint}{$endpoint}");
-
+        $response = $this->request('DELETE', $uri, $options);
         $this->sleepIfRateLimited($response);
-
-        return json_decode($response->getBody()->getContents());
+        return $response;
     }
+
 
     /**
      * Update a resource using the assigned endpoint ($this->endpoint).
@@ -134,54 +106,12 @@ class ShipStation
      * @param  string  $endpoint
      * @return \stdClass
      */
-    public function update($options = [], $endpoint = '')
+    public function update($endpoint, array $options = []): \Psr\Http\Message\ResponseInterface
     {
-        $response = $this->client->request('PUT', "{$this->endpoint}{$endpoint}", ['json' => $options]);
-
+        $response = $this->request('PUT', $endpoint, ['json' => $options]);
         $this->sleepIfRateLimited($response);
-
-        return json_decode($response->getBody()->getContents());
-    }
-
-    /**
-     * Get the maximum number of requests that can be sent per window.
-     *
-     * @return int
-     */
-    public function getMaxAllowedRequests()
-    {
-        return $this->maxAllowedRequests;
-    }
-
-    /**
-     * Get the remaining number of requests that can be sent in the current window.
-     *
-     * @return int
-     */
-    public function getRemainingRequests()
-    {
-        return $this->remainingRequests;
-    }
-
-    /**
-     * Get the number of seconds remaining until the next window begins.
-     *
-     * @return int
-     */
-    public function getSecondsUntilReset()
-    {
-        return $this->secondsUntilReset;
-    }
-
-    /**
-     * Are we currently rate limited?
-     * We are if there are no more requests allowed in the current window.
-     *
-     * @return bool
-     */
-    public function isRateLimited()
-    {
-        return $this->remainingRequests !== null && ! $this->remainingRequests;
+        // return json_decode($response->getBody()->getContents());
+        return $response;
     }
 
     /**
@@ -191,12 +121,11 @@ class ShipStation
      */
     public function sleepIfRateLimited(Response $response)
     {
-        $this->maxAllowedRequests = (int) $response->getHeader('X-Rate-Limit-Limit')[0];
-        $this->remainingRequests = (int) $response->getHeader('X-Rate-Limit-Remaining')[0];
-        $this->secondsUntilReset = (int) $response->getHeader('X-Rate-Limit-Reset')[0];
+        $rateLimit = $response->getHeader('X-Rate-Limit-Remaining')[0];
+        $rateLimitWait = $response->getHeader('X-Rate-Limit-Reset')[0];
 
-        if ($this->isRateLimited() || ($this->secondsUntilReset / $this->remainingRequests) > 1.5) {
-            usleep(1500000);
+        if (($rateLimitWait / $rateLimit) > 1.5) {
+            sleep(1.5);
         }
     }
 
@@ -208,11 +137,11 @@ class ShipStation
      */
     public function __get($property)
     {
-        if (in_array('/'.$property.'/', $this->endpoints)) {
-            $this->endpoint = '/'.$property.'/';
+        if (in_array('/' . $property . '/', $this->endpoints)) {
+            $this->endpoint = '/' . $property . '/';
         }
 
-        $className = 'LaravelShipStation\\Helpers\\'.ucfirst($property);
+        $className = "Hkonnet\\LaravelShipStation\\Helpers\\" . ucfirst($property);
 
         if (class_exists($className)) {
             return new $className($this);
