@@ -80,7 +80,9 @@ class ShipStation extends Client
      */
     public function post($uri, array $options = []): \Psr\Http\Message\ResponseInterface
     {
-        $response = $this->request('POST', $uri, ['form_params' => $options]);
+        //$response = $this->request('POST', $uri, ['form_params' => $options]);
+        $contentType = isset($options['json']) ? 'json' : 'form_params';
+        $response = $this->request('POST', $uri, [$contentType => $options]);
         $this->sleepIfRateLimited($response);
         return $response;
     }
